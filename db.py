@@ -52,7 +52,7 @@ class DB:
         await self.do('UPDATE user SET searchment = %s WHERE id = %s', (searchment, user_id))
 
     async def search_1(self, user_id, resp) -> tuple:
-        return await self.read("SELECT name, kcal, protein, fat, carbonates FROM product WHERE LOWER(name) LIKE %s", ('%'+resp.lower()+'%',), one=True)
+        return await self.read("SELECT name, kcal, protein, fat, carbonates FROM product WHERE name = %s AND user_id IN (%s, %s)", (resp, my_id, user_id), one=True)
 
     async def search_p(self, user_id, page=None) -> tuple:
         if page is None:
