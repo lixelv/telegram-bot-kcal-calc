@@ -27,6 +27,16 @@ class DB:
         else:
             return self.cursor.fetchall()
 
+    def is_0(self, message: types.Message):
+        result = self.search(message.from_user.id, message.text)
+        result = not bool(result)
+        return result
+
+    def is_1(self, message: types.Message):
+        result = self.read('SELECT id FROM product WHERE LOWER(name) = LOWER(%s)', (message.text,))
+        result = bool(len(result) == 1)
+        return result
+
     def set_searchment(self, user_id, searchment):
         self.do('UPDATE user SET searchment = %s WHERE id = %s', (searchment, user_id))
 
