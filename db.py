@@ -33,7 +33,7 @@ class DB:
         return result
 
     def is_1(self, message: types.Message):
-        result = self.read('SELECT id FROM product WHERE LOWER(name) = LOWER(%s)', (message.text,))
+        result = self.read('SELECT id FROM product WHERE name = %s', (message.text,))
         result = bool(len(result) == 1)
         return result
 
