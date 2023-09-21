@@ -9,7 +9,8 @@ db_config = {
     "host": env('HOST_'),
     "user": env('USER_'),
     "password": env('PASSWORD_'),
-    "database": env('DB_')
+    "database": env('DB_'),
+    "port": 3306
 }
 
 token = env('TELEGRAM')
