@@ -7,7 +7,7 @@ import aiomysql
 class DB:
     def __init__(self, loop, db_config):
         self.loop = loop
-        self.pool = loop.run_until_complete(self.init_pool(db_config['host'], db_config['port'], db_config['user'], db_config['password'], db_config['db']))
+        self.pool = loop.run_until_complete(self.init_pool(db_config['host'], db_config['port'], db_config['user'], db_config['password'], db_config['database']))
 
     async def init_pool(self, host, port, user, password, db):
         pool = await aiomysql.create_pool(
