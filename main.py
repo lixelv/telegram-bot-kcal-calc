@@ -2,7 +2,7 @@
 from url import *
 from db import DB
 
-sql = DB(db_config, loop)
+sql = DB(loop, db_config)
 
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
