@@ -1,4 +1,3 @@
-import asyncio
 from aiogram import types
 from url import page_size, my_id
 import aiomysql
@@ -35,12 +34,12 @@ class DB:
     async def is_0(self, message: types.Message):
         result = await self.search(message.from_user.id, message.text)
         result = not bool(result)
-        return result
+        return result or message.text in ['->', '<-']
 
     async def is_1(self, message: types.Message):
         result = await self.read('SELECT id FROM product WHERE name = %s', (message.text,))
         result = bool(len(result) == 1)
-        return result
+        return result or message.text in ['->', '<-']
 
     async def search_1(self, user_id, resp) -> tuple:
         return await self.read("SELECT name, kcal, protein, fat, carbonates FROM product WHERE name = %s AND user_id IN (%s, %s)", (resp, my_id, user_id), one=True)
