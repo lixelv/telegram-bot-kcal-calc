@@ -1,8 +1,6 @@
-from aiogram.dispatcher.filters import Command
 from asyncio import get_event_loop
 from aiogram import Bot, Dispatcher, types, executor
 from envparse import env
-import asyncio
 
 env.read_envfile('.env')
 db_config = {
@@ -14,7 +12,7 @@ db_config = {
 }
 
 token = env('TELEGRAM')
-my_id = env('MYID')
+my_id = int(env('MYID'))
 
 bot = Bot(token)
 dp = Dispatcher(bot)
@@ -22,6 +20,9 @@ dp = Dispatcher(bot)
 loop = get_event_loop()
 
 page_size = 40
+
+next_ = "Далее ▶️"
+previous_ = "◀️ Назад"
 
 def inline(lst: list):
     kb: types.ReplyKeyboardMarkup = types.ReplyKeyboardMarkup()

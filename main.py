@@ -11,9 +11,9 @@ async def start(message: types.Message):
 
     await message.answer('Привет!')
 
-@dp.message_handler(sql.is_0)
-async def nothing_found(message: types.Message):
-    await message.answer('Ничего не найдено!')
+@dp.message_handler(lambda message: len(message.text) <= 3)
+async def bigger_then_3(message: types.Message):
+    await message.answer('Запрос должен быть длиннее 3 символов!')
 
 @dp.message_handler(sql.is_1)
 async def found_1(message: types.Message):
@@ -23,28 +23,35 @@ async def found_1(message: types.Message):
              f'Белок: `{searchment[2]} г.`\n' \
              f'Жир: `{searchment[3]} г.`\n' \
              f'Углеводы: `{searchment[4]} г.`'
+
+    print(searchment[5])
+
     await message.answer(result, reply_markup=types.ReplyKeyboardRemove(), parse_mode='Markdown')
 
 @dp.message_handler(content_types='text')
 async def global_search(message: types.Message):
-    page = None
-    if message.text == "->":
+    if message.text == next_:
         page = 1
         await sql.page(message.from_user.id, page)
-        page = sql.get_page(message.from_user.id)
+        page = await sql.get_page(message.from_user.id)
 
-    elif message.text == "<-":
+    elif message.text == previous_:
         page = -1
         await sql.page(message.from_user.id, page)
-        page = sql.get_page(message.from_user.id)
+        page = await sql.get_page(message.from_user.id)
 
     else:
+        page = 0
         await sql.set_searchment(message.from_user.id, message.text)
+        await sql.page(message.from_user.id, page)
 
     result = await sql.search_p(message.from_user.id, page=page)
-    kb = inline(result)
-    await message.answer('Вот список ответов на ваш запрос:', reply_markup=kb)
+    if result:
+        kb = inline(result)
+        await message.answer('Вот список ответов на ваш запрос:', reply_markup=kb)
 
+    else:
+        await message.answer('Ничего не найдено!')
 
 if __name__ == '__main__':
     executor.start_polling(dp, loop=loop, skip_updates=True)
