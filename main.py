@@ -23,7 +23,7 @@ async def found_1(message: types.Message):
              f'Ккал: `{searchment[1]} ккал`\n' \
              f'Белок: `{searchment[2]} г.`\n' \
              f'Жир: `{searchment[3]} г.`\n' \
-             f'Углеводы: `{searchment[4]} г.`' \
+             f'Углеводы: `{searchment[4]} г.`\n' \
              f'Волокна: `{searchment[5]} г.`\n'
 
     print(searchment[6])
