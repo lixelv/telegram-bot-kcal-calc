@@ -50,7 +50,6 @@ async def global_search(message: types.Message):
     result = await sql.search_p(message.from_user.id, page=page)
     if result:
         count = await sql.count(message.from_user.id)
-        print(count)
         kb = inline(result, count, page)
         await message.answer('Вот список ответов на ваш запрос:', reply_markup=kb)
 
