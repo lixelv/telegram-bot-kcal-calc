@@ -38,20 +38,15 @@ class DB:
         return result
 
     async def search_1(self, user_id, resp) -> tuple:
-        return await self.read("SELECT name, kcal, protein, fat, carbohydrate, url FROM product WHERE name = %s AND user_id IN (%s, %s);", (resp, my_id, user_id), one=True)
+        return await self.read("SELECT name, kcal, protein, fat, carbohydrate, fiber, url FROM product WHERE name = %s AND user_id IN (%s, %s);", (resp, my_id, user_id), one=True)
 
     async def search_p(self, user_id, page=None) -> tuple:
         if page is None:
             page = await self.get_page(user_id)
 
-        resp = await self.read("SELECT LOWER(searchment) FROM user WHERE id = %s;", (user_id,), one=True)
-        resp = resp[0]
-
-        result = await self.read("SELECT name FROM product WHERE MATCH(name) AGAINST(%s IN BOOLEAN MODE) AND user_id IN (%s, %s) LIMIT %s OFFSET %s;", (resp.lower(), my_id, user_id, page_size, page_size * page))
+        result = await self.read("SELECT name, COUNT(id) FROM product WHERE MATCH(name) AGAINST((SELECT LOWER(searchment) FROM user WHERE id = %s) IN BOOLEAN MODE) AND user_id IN (%s, %s) GROUP BY name LIMIT %s OFFSET %s;",
+                                 (user_id, my_id, user_id, page_size, page_size * page))
         return result
-
-    async def search(self, user_id, resp) -> tuple:
-        return await self.read("SELECT name FROM product WHERE MATCH(name) AGAINST(%s IN BOOLEAN MODE) AND user_id IN (%s, %s);", (resp.lower(), my_id, user_id))
 
     async def set_searchment(self, user_id, searchment):
         await self.do('UPDATE user SET searchment = %s WHERE id = %s;', (searchment, user_id))
@@ -65,6 +60,10 @@ class DB:
             await self.do('UPDATE user SET page = page + %s WHERE id = %s;', (n_p, user_id))
         else:
             await self.do('UPDATE user SET page = %s WHERE id = %s;', (n_p, user_id))
+
+    async def count(self, user_id):
+        result = await self.read("SELECT COUNT(*) FROM product WHERE MATCH(name) AGAINST((SELECT LOWER(searchment) FROM user WHERE id = %s) IN BOOLEAN MODE) AND user_id IN (%s, %s);", (user_id, my_id, user_id), one=True)
+        return result[0]
 
     async def user_exist(self, user_id) -> bool:
         return bool(await self.read('SELECT id FROM user WHERE id = %s;', (user_id,)))

@@ -1,5 +1,5 @@
 from asyncio import get_event_loop
-from aiogram import Bot, Dispatcher, types, executor
+from aiogram import Bot, Dispatcher, types
 from envparse import env
 
 env.read_envfile('.env')
@@ -24,8 +24,17 @@ page_size = 40
 next_ = "Далее ▶️"
 previous_ = "◀️ Назад"
 
-def inline(lst: list):
+def inline(lst: list, count, page):
+
     kb: types.ReplyKeyboardMarkup = types.ReplyKeyboardMarkup()
+
+    if page != 0:
+        kb.add(types.KeyboardButton(previous_))
+
     for key in lst:
         kb.add(types.KeyboardButton(key[0]))
+
+    if page < count // page_size:
+        kb.add(types.KeyboardButton(next_))
+
     return kb

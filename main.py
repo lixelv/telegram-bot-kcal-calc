@@ -1,5 +1,6 @@
 # from webhook import webhook_pooling
 from url import *
+from aiogram import types, executor
 from db import DB
 
 sql = DB(loop, db_config)
@@ -22,9 +23,10 @@ async def found_1(message: types.Message):
              f'Ккал: `{searchment[1]} ккал`\n' \
              f'Белок: `{searchment[2]} г.`\n' \
              f'Жир: `{searchment[3]} г.`\n' \
-             f'Углеводы: `{searchment[4]} г.`'
+             f'Углеводы: `{searchment[4]} г.`' \
+             f'Волокна: `{searchment[5]} г.`\n'
 
-    print(searchment[5])
+    print(searchment[6])
 
     await message.answer(result, reply_markup=types.ReplyKeyboardRemove(), parse_mode='Markdown')
 
@@ -47,7 +49,9 @@ async def global_search(message: types.Message):
 
     result = await sql.search_p(message.from_user.id, page=page)
     if result:
-        kb = inline(result)
+        count = await sql.count(message.from_user.id)
+        print(count)
+        kb = inline(result, count, page)
         await message.answer('Вот список ответов на ваш запрос:', reply_markup=kb)
 
     else:
