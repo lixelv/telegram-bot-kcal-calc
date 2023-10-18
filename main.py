@@ -59,8 +59,8 @@ async def global_search(message: types.Message):
 
 if __name__ == '__main__':
         while True:
-        try:
-            executor.start_polling(dp, skip_updates=True)
-        except Exception as e:
-            print(e)
-            sleep(240)
+            try:
+                executor.start_polling(dp, skip_updates=True)
+            except Exception as e:
+                print(e)
+                sleep(240)
