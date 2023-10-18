@@ -1,6 +1,7 @@
 # from webhook import webhook_pooling
 from url import *
 from aiogram import types, executor
+from time import sleep
 from db import DB
 
 sql = DB(loop, db_config)
@@ -57,5 +58,9 @@ async def global_search(message: types.Message):
         await message.answer('Ничего не найдено!')
 
 if __name__ == '__main__':
-    executor.start_polling(dp, loop=loop, skip_updates=True)
-    # webhook_pooling(dp, port, link, my_id)
+        while True:
+        try:
+            executor.start_polling(dp, skip_updates=True)
+        except Exception as e:
+            print(e)
+            sleep(240)
