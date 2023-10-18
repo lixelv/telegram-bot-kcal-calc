@@ -3,6 +3,12 @@ from url import *
 from aiogram import types, executor
 from time import sleep
 from db import DB
+import signal
+import os
+
+def signal_handler(sig, frame):
+    print("Выход...")
+    os.kill(os.getpid(), signal.SIGTERM)
 
 sql = DB(loop, db_config)
 
@@ -58,14 +64,11 @@ async def global_search(message: types.Message):
         await message.answer('Ничего не найдено!')
 
 if __name__ == '__main__':
-        while True:
-            try:
-                executor.start_polling(dp, skip_updates=True)
-                
-            except KeyboardInterrupt:
-                print("Выход...")
-                break
-            
-            except Exception as e:
-                print(e)
-                sleep(240)
+    signal.signal(signal.SIGINT, signal_handler)
+    while True:
+        try:
+            executor.start_polling(dp, skip_updates=True)
+        
+        except Exception as e:
+            print(e)
+            sleep(240)
